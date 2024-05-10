@@ -1,6 +1,21 @@
 from Graph import Graph
+import argparse
 
-graph = Graph(int(input('nodes> ')))
+parser = argparse.ArgumentParser()
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-g', '--generate', default=False, help='auto generation', type=bool)
+group.add_argument('-u', '--user-provided', default=True, help='user provided list', type=bool)
+
+args = parser.parse_args()
+
+if args.generate:
+    saturation = int(input('saturation> '))
+    graph = Graph(int(input('     nodes> ')), mode='generate', saturation=saturation)
+elif args.user_provided:
+    graph = Graph(int(input('nodes> ')))
+else:
+    raise Exception("Must provide program's working mode!")
+
 
 while True:
     action = input('action> ')

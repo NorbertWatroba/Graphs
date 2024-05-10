@@ -2,10 +2,28 @@ from collections import deque
 
 
 class Graph:
-    def __init__(self, number: int):
-        self.nodes: dict[str, list] = dict()
-        for i in range(1, number+1):
-            self.nodes[str(i)] = [v for v in input(f'    {i}> ').split() if int(v) in range(1, number+1)]
+    def __init__(self, size: int, mode: str = 'input', **kwargs):
+        if mode == 'generate':
+            self.nodes = self._generate(size, **kwargs)
+        else:
+            self.nodes: dict[str, list[str]] = dict()
+            for i in range(1, size+1):
+                self.nodes[str(i)] = [v for v in input(f'    {i}> ').split() if int(v) in range(1, size+1)]
+
+    @staticmethod
+    def _generate(size: int, saturation: int = 100) -> dict[str, list[str]]:
+        max_edges = size * (size - 1) // 2
+        num_edges = saturation * max_edges // 100
+        graph: dict[str, list[str]] = {str(k): [] for k in range(1, size+1)}
+        current = 1
+        edge = 2
+        for _ in range(num_edges):
+            if edge > size:
+                current += 1
+                edge = current + 1
+            graph[str(current)].append(str(edge))
+            edge += 1
+        return graph
 
     def print_list(self):
         for node in self.nodes.keys():
