@@ -8,7 +8,7 @@ class Graph:
         else:
             self.nodes: dict[str, list[str]] = dict()
             for i in range(1, size+1):
-                self.nodes[str(i)] = [v for v in input(f'    {i}> ').split() if int(v) in range(1, size+1)]
+                self.nodes[str(i)] = [v for v in set(input(f'    {i}> ').split()) if int(v) in range(1, size+1)]
 
     @staticmethod
     def _generate(size: int, saturation: int = 100) -> dict[str, list[str]]:
