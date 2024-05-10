@@ -3,8 +3,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group()
-group.add_argument('-g', '--generate', default=False, help='auto generation', type=bool)
-group.add_argument('-u', '--user-provided', default=True, help='user provided list', type=bool)
+group.add_argument('-g', '--generate', action='store_true', help='auto generation')
+group.add_argument('-u', '--user-provided', action='store_true', help='user provided list')
 
 args = parser.parse_args()
 
