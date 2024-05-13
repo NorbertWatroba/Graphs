@@ -26,8 +26,8 @@ class Graph:
         return graph
 
     def print_list(self):
-        for node in self.nodes.keys():
-            connections = ' '.join(self.nodes[node])
+        for node, edges in self.nodes.items():
+            connections = ' '.join(edges)
             print(f'{node}> {connections}')
 
     def print_matrix(self):
@@ -35,13 +35,13 @@ class Graph:
         print(f'  | {" ".join(list(self.nodes.keys()))}')
         print(f'--+{"--" * len(self.nodes)}')
         # body
-        for node in self.nodes.keys():
-            row = ['1' if i in self.nodes[node] else '0' for i in self.nodes.keys()]
+        for node, edges in self.nodes.items():
+            row = ['1' if i in edges else '0' for i in self.nodes.keys()]
             print(f'{node} | {" ".join(row)}')
 
     def print_table(self):
-        for node in self.nodes.keys():
-            for edge in self.nodes[node]:
+        for node, edges in self.nodes.items():
+            for edge in edges:
                 print(f'({node},{edge})')
 
     def find_edge(self, frm: str, to: str):
@@ -52,43 +52,46 @@ class Graph:
 
     def bfs(self):
         visited = {'1'}
-        que = deque(['1'])
-        while que:
-            current = que.popleft()
+        queue = deque(['1'])
+
+        while queue:
+            current = queue.popleft()
             print(current, end=' ')
+
             for edge in self.nodes[current]:
                 if edge not in visited:
-                    que.append(edge)
+                    queue.append(edge)
                     visited.add(edge)
         print('')
 
     def dfs(self):
-        self._dfs(set())
-        print('')
-
-    def _dfs(self, visited: set[str], current: str = '1'):
-        if current not in visited:
+        def _dfs(current: str = '1'):
             print(current, end=' ')
             visited.add(current)
             for neighbour in self.nodes[current]:
-                self._dfs(visited, neighbour)
+                if neighbour not in visited:
+                    _dfs(neighbour)
+
+        visited = set()
+        _dfs()
+        print('')
 
     def kahn_sort(self):
         incoming_edges = {k: 0 for k in self.nodes.keys()}
-        for node in self.nodes.keys():
-            for edge in self.nodes[node]:
+        for node, edges in self.nodes.items():
+            for edge in edges:
                 incoming_edges[edge] += 1
 
-        que = deque([k for k, v in incoming_edges.items() if v == 0])
+        queue = deque([k for k, v in incoming_edges.items() if v == 0])
         order = []
 
-        while que:
-            node = que.popleft()
+        while queue:
+            node = queue.popleft()
             order.append(node)
             for edge in self.nodes[node]:
                 incoming_edges[edge] -= 1
                 if incoming_edges[edge] == 0:
-                    que.append(edge)
+                    queue.append(edge)
 
         if len(order) == len(self.nodes):
             print(f'Topologically sorted graph: {" ".join(order)}')

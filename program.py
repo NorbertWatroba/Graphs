@@ -1,4 +1,3 @@
-from Graph import Graph
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -10,9 +9,43 @@ args = parser.parse_args()
 
 if args.generate:
     saturation = int(input('saturation> '))
-    graph = Graph(int(input('     nodes> ')), mode='generate', saturation=saturation)
+    while True:
+        representation = input('representation:\n1. List\n2. Matrix\n3. Table\n> ')
+        match representation:
+            case '1' | '1.':
+                from Graph import Graph
+                graph = Graph(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                break
+            case '2' | '2.':
+                from Graph_matrix import GraphMatrix
+                graph = GraphMatrix(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                break
+            case '3' | '3.':
+                from Graph_table import GraphTable
+                graph = GraphTable(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                break
+            case _:
+                print('Choose 1-3!')
+
 elif args.user_provided:
-    graph = Graph(int(input('nodes> ')))
+    while True:
+        representation = input('representation:\n1. List\n2. Matrix\n3. Table\n> ')
+        match representation:
+            case '1' | '1.':
+                from Graph import Graph
+                graph = Graph(int(input('nodes> ')))
+                break
+            case '2' | '2.':
+                from Graph_matrix import GraphMatrix
+                graph = GraphMatrix(int(input('nodes> ')))
+                break
+            case '3' | '3.':
+                from Graph_table import GraphTable
+                graph = GraphTable(int(input('nodes> ')))
+                break
+            case _:
+                print('Choose 1-3!')
+
 else:
     raise Exception("Must provide program's working mode!")
 
