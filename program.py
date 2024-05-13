@@ -9,20 +9,21 @@ args = parser.parse_args()
 
 if args.generate:
     saturation = int(input('saturation> '))
+    nodes = int(input('     nodes> '))
     while True:
         representation = input('representation:\n1. List\n2. Matrix\n3. Table\n> ')
         match representation:
             case '1' | '1.':
                 from Graph import Graph
-                graph = Graph(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                graph = Graph(nodes, mode='generate', saturation=saturation)
                 break
             case '2' | '2.':
                 from Graph_matrix import GraphMatrix
-                graph = GraphMatrix(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                graph = GraphMatrix(nodes, mode='generate', saturation=saturation)
                 break
             case '3' | '3.':
                 from Graph_table import GraphTable
-                graph = GraphTable(int(input('     nodes> ')), mode='generate', saturation=saturation)
+                graph = GraphTable(nodes, mode='generate', saturation=saturation)
                 break
             case _:
                 print('Choose 1-3!')

@@ -4,9 +4,11 @@ from collections import deque
 class GraphMatrix:
     def __init__(self, size: int, mode: str = 'input', **kwargs):
         if mode == 'generate':
+            self.size = size
             self.matrix = [[0] * size for _ in range(size)]
             self._generate(size, **kwargs)
         else:
+            self.size = size
             self.matrix = [[0] * size for _ in range(size)]
             for i in range(size):
                 edges = [int(v) - 1 for v in set(input(f'{i + 1}> ').split()) if int(v) in range(1, size + 1)]
@@ -56,32 +58,43 @@ class GraphMatrix:
             print(f'False: edge({frm},{to}) does not exist in the Graph!')
 
     def bfs(self):
-        size = len(self.matrix)
-        visited = [True] + [False] * (size - 1)
-        queue = deque([0])
+        def _bfs(start: int = 1) -> list[str]:
+            visited[start-1] = True
+            queue = deque([start])
+            result = []
 
-        while queue:
-            current = queue.popleft()
-            print(current + 1, end=' ')
+            while queue:
+                current = queue.popleft()
+                result.append(str(current))
 
-            for i in range(size):
-                if self.matrix[current][i] == 1 and not visited[i]:
-                    queue.append(i)
-                    visited[i] = True
-        print('')
+                for i in range(self.size):
+                    if self.matrix[current-1][i] == 1 and not visited[i]:
+                        queue.append(i+1)
+                        visited[i] = True
+            return result
+
+        visited = [True] + [False] * (self.size - 1)
+        order: list[str] = _bfs()
+        while len(order) != len(self.matrix):
+            to_go = [node for node in range(1, self.size + 1) if str(node) not in order]
+            order.extend(list(set(_bfs(to_go.pop())) - set(order)))
+        print(' '.join(order))
 
     def dfs(self):
-        def _dfs(node=0):
-            print(node + 1, end=' ')
-            visited[node] = True
-            for i in range(size):
-                if self.matrix[node][i] == 1 and not visited[i]:
-                    _dfs(i)
+        def _dfs(current=0) -> list[str]:
+            result = [str(current+1)]
+            visited[current] = True
+            for i in range(self.size):
+                if self.matrix[current][i] == 1 and not visited[i]:
+                    result.extend(_dfs(i))
+            return result
 
-        size = len(self.matrix)
-        visited = [False] * size
-        _dfs()
-        print('')
+        visited = [False] * self.size
+        order: list[str] = _dfs()
+        to_go = [node for node in range(1, self.size + 1) if str(node) not in order]
+        while len(order) != self.size:
+            order.extend(_dfs(to_go.pop()))
+        print(' '.join(order))
 
     def kahn_sort(self):
         size = len(self.matrix)

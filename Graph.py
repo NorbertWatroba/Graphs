@@ -36,7 +36,7 @@ class Graph:
         print(f'--+{"--" * len(self.nodes)}')
         # body
         for node, edges in self.nodes.items():
-            row = ['1' if i in edges else '0' for i in self.nodes.keys()]
+            row = ['1' if i in edges else '0' for i in self.nodes]
             print(f'{node} | {" ".join(row)}')
 
     def print_table(self):
@@ -51,33 +51,46 @@ class Graph:
             print(f'False: edge({frm},{to}) does not exist in the Graph!')
 
     def bfs(self):
-        visited = {'1'}
-        queue = deque(['1'])
+        def _bfs(start: str = '1') -> list[str]:
+            visited.add(start)
+            queue = deque([start])
+            result = []
 
-        while queue:
-            current = queue.popleft()
-            print(current, end=' ')
+            while queue:
+                current = queue.popleft()
+                result.append(current)
 
-            for edge in self.nodes[current]:
-                if edge not in visited:
-                    queue.append(edge)
-                    visited.add(edge)
-        print('')
+                for edge in self.nodes[current]:
+                    if edge not in visited:
+                        queue.append(edge)
+                        visited.add(edge)
+            return result
+
+        visited = set()
+        order: list[str] = _bfs()
+        while len(order) != len(self.nodes):
+            to_go = [node for node in self.nodes if node not in order]
+            order.extend(list(set(_bfs(to_go.pop())) - set(order)))
+        print(' '.join(order))
 
     def dfs(self):
         def _dfs(current: str = '1'):
-            print(current, end=' ')
+            result = [current]
             visited.add(current)
             for neighbour in self.nodes[current]:
                 if neighbour not in visited:
-                    _dfs(neighbour)
+                    result.extend(_dfs(neighbour))
+            return result
 
         visited = set()
-        _dfs()
-        print('')
+        order: list[str] = _dfs()
+        to_go = [node for node in self.nodes if node not in order]
+        while len(order) != len(self.nodes):
+            order.extend(_dfs(to_go.pop()))
+        print(' '.join(order))
 
     def kahn_sort(self):
-        incoming_edges = {k: 0 for k in self.nodes.keys()}
+        incoming_edges = {k: 0 for k in self.nodes}
         for node, edges in self.nodes.items():
             for edge in edges:
                 incoming_edges[edge] += 1
@@ -116,7 +129,7 @@ class Graph:
         temp = set()
         sorted_nodes = []
 
-        for key in self.nodes.keys():
+        for key in self.nodes:
             try:
                 dfs(key)
             except ValueError as e:
